@@ -1,11 +1,27 @@
+import os
+import shutil
+
+
 def garanta_existencia_diretorio(diretorio: str) -> None:
-    print(f'Garantindo existência do diretório {diretorio}...')
+    diretorio_exemplos: str = './exemplos'
+    if os.path.exists(diretorio):
+        print(f'Diretório {diretorio} já existe. Sobrescrendo.')
+        shutil.rmtree(diretorio)
+    else:
+        print(f'Criando diretório {diretorio}...')
+
+    print(f'Copiando arquivos de {diretorio_exemplos} para {diretorio}...')
+    shutil.copytree(diretorio_exemplos, diretorio)
+    print('Arquivos copiados com sucesso!')
+
 
 def criptografe_diretorio(diretorio: str) -> None:
     print(f'Criptografando diretório {diretorio}...')
 
+
 def descriptografe_diretorio(diretorio: str) -> None:
     print(f'Descriptografando diretório {diretorio}...')
+
 
 if __name__ == '__main__':
     # Apesar de o código ser flexível o suficiente para criptografar qualquer diretório, estamos setando um diretório
