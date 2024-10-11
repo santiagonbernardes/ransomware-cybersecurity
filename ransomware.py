@@ -1,5 +1,6 @@
 from arquivos_utils import prepare_ambiente_de_teste
 from classes import GerenciadorDeChave, Ransomware
+from excecoes import ChaveNaoEncontrada, ChaveInvalida
 
 if __name__ == '__main__':
     # Apesar de o código ser flexível o suficiente para criptografar qualquer diretório, estamos setando um diretório
@@ -21,27 +22,27 @@ if __name__ == '__main__':
         opcao = int(input('Digite a opção desejada: '))
         print()
 
-        if opcao == 1:
-            ransomware.infecte_diretorio(DIRETORIO_TESTE)
-            print(f'Você foi hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram criptografados!')
-        elif opcao == 2:
-            print(f'Chave de descriptografia: {gerenciador_de_chave.obtenha_chave(legivel=True)}')
-        elif opcao == 3:
-            print('Para obter a chave de descriptografia, você precisa pagar!')
-            print(f'(Ou abrir o arquivo {ARQUIVO_CHAVE} e converter os bytes para string)')
-            print('(Ou escolher a opção 2 copiar e colar a chave de descriptografia)')
-            print('Nós somos péssimos hackers... =(\n')
-            chave_legivel = input('Digite a chave de descriptografia: ')
-            chave_em_bytes = gerenciador_de_chave.converta_para_bytes(chave_legivel)
-            try:
-                ransomware.desinfecte_diretorio(DIRETORIO_TESTE, chave_em_bytes, remover_chave=True)
-            except ValueError:
-                print('Chave de descriptografia inválida!')
-                continue
-            print(
-                f'Você não está mais hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram descriptografados!'
-            )
-        elif opcao == 0:
-            print('Até mais!')
-        else:
-            print('Opção inválida!')
+        try:
+            if opcao == 1:
+                ransomware.infecte_diretorio(DIRETORIO_TESTE)
+                print(f'Você foi hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram criptografados!')
+            elif opcao == 2:
+                print(f'Chave de descriptografia: {gerenciador_de_chave.obtenha_chave(legivel=True)}')
+            elif opcao == 3:
+                # Verificando se os arquivos foram criptografados
+                gerenciador_de_chave.obtenha_chave()
+                print('Para obter a chave de descriptografia, você precisa pagar!')
+                print(f'(Ou abrir o arquivo {ARQUIVO_CHAVE} e converter os bytes para string)')
+                print('(Ou escolher a opção 2 copiar e colar a chave de descriptografia)')
+                print('Nós somos péssimos hackers... =(\n')
+                chave_legivel = input('Digite a chave de descriptografia: ')
+                ransomware.desinfecte_diretorio(DIRETORIO_TESTE, chave_legivel, remover_chave=True)
+                print(
+                    f'Você não está mais hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram descriptografados!'
+                )
+            elif opcao == 0:
+                print('Até mais!')
+            else:
+                print('Opção inválida!')
+        except (ChaveNaoEncontrada, ChaveInvalida) as e:
+            print(e)
