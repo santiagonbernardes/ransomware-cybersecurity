@@ -1,22 +1,5 @@
-import os
-import shutil
-
+from arquivos_utils import garanta_existencia_diretorio_teste
 from classes import GerenciadorDeChave, Ransomware
-
-
-def garanta_existencia_diretorio_teste(diretorio):
-    print(f'Garantindo existência do diretório teste {diretorio}...')
-    diretorio_exemplos = './exemplos'
-    if os.path.exists(diretorio):
-        print(f'Diretório {diretorio} já existe. Sobrescrendo.')
-        shutil.rmtree(diretorio)
-    else:
-        print(f'Criando diretório {diretorio}...')
-
-    print(f'Copiando arquivos de {diretorio_exemplos} para {diretorio}...')
-    shutil.copytree(diretorio_exemplos, diretorio)
-    print('Arquivos copiados com sucesso!')
-
 
 if __name__ == '__main__':
     # Apesar de o código ser flexível o suficiente para criptografar qualquer diretório, estamos setando um diretório
@@ -36,6 +19,7 @@ if __name__ == '__main__':
         print('3 - Descriptografar')
         print('0 - Sair')
         opcao = int(input('Digite a opção desejada: '))
+        print()
 
         if opcao == 1:
             ransomware.infecte_diretorio(DIRETORIO_TESTE)
