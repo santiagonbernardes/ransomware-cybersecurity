@@ -25,3 +25,15 @@ def garanta_existencia_diretorio_teste(diretorio_de_teste):
     print(f'Copiando arquivos de {DIRETORIO_EXEMPLOS} para {diretorio_de_teste}...')
     shutil.copytree(DIRETORIO_EXEMPLOS, diretorio_de_teste)
     print('Arquivos copiados com sucesso!')
+
+
+def remova_chave_de_execucao_anterior(gerenciador_de_chave):
+    try:
+        gerenciador_de_chave.remova_chave()
+    except FileNotFoundError:
+        pass
+
+
+def prepare_ambiente_de_teste(diretorio_de_teste, gerenciador_de_chave):
+    garanta_existencia_diretorio_teste(diretorio_de_teste)
+    remova_chave_de_execucao_anterior(gerenciador_de_chave)

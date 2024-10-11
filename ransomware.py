@@ -1,4 +1,4 @@
-from arquivos_utils import garanta_existencia_diretorio_teste
+from arquivos_utils import prepare_ambiente_de_teste
 from classes import GerenciadorDeChave, Ransomware
 
 if __name__ == '__main__':
@@ -8,8 +8,8 @@ if __name__ == '__main__':
 
     DIRETORIO_TESTE = './ransomware_tmp'
     ARQUIVO_CHAVE = 'keys.rans'
-    garanta_existencia_diretorio_teste(DIRETORIO_TESTE)
     gerenciador_de_chave = GerenciadorDeChave(ARQUIVO_CHAVE)
+    prepare_ambiente_de_teste(DIRETORIO_TESTE, gerenciador_de_chave)
     ransomware = Ransomware(gerenciador_de_chave)
     print('O que você deseja fazer?')
     opcao = -1
@@ -35,7 +35,7 @@ if __name__ == '__main__':
             chave_em_bytes = gerenciador_de_chave.converta_para_bytes(chave_legivel)
             try:
                 ransomware.desinfecte_diretorio(DIRETORIO_TESTE, chave_em_bytes, remover_chave=True)
-            except:
+            except ValueError:
                 print('Chave de descriptografia inválida!')
                 continue
             print(
