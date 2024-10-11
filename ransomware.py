@@ -49,7 +49,11 @@ if __name__ == '__main__':
             print('Nós somos péssimos hackers... =(\n')
             chave_legivel = input('Digite a chave de descriptografia: ')
             chave_em_bytes = gerenciador_de_chave.converta_para_bytes(chave_legivel)
-            ransomware.desinfecte_diretorio(DIRETORIO_TESTE, chave_em_bytes, remover_chave=True)
+            try:
+                ransomware.desinfecte_diretorio(DIRETORIO_TESTE, chave_em_bytes, remover_chave=True)
+            except:
+                print('Chave de descriptografia inválida!')
+                continue
             print(
                 f'Você não está mais hackeado! Todos os arquivos do diretório {DIRETORIO_TESTE} foram descriptografados!'
             )
