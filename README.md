@@ -1,8 +1,13 @@
 # Ransomware para a disciplina Cognitive Cybersecurity
 
 ## Grupo
+
 - Cristiano Washington Dias – RM555992
 - Santiago Nascimento Bernardes – RM557447
+
+## Repositório
+
+- https://github.com/santiagonbernardes/ransomware-cybersecurity
 
 ## Requisitos do Projeto
 
@@ -68,3 +73,4 @@ O código deve ser capaz de:
 - `excecoes.py`: Define exceções personalizadas.
 - `arquivos_utils.py`: Utilitários para leitura e escrita de arquivos.
 - `requirements.txt`: Lista de dependências do projeto.
+- `exemplos`: Contém alguns arquivos para que o ransomware possa ser testado.
